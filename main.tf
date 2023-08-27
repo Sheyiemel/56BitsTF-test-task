@@ -62,7 +62,7 @@ resource "aws_kms_key" "bits_key" {
         Resource = "*",
         Condition = {
           Bool = {
-            "kms:GrantIsForAWSResource" = "true",
+            "kms:GrantIsForAWSPrincipal = "true",
           },
         },
       },
