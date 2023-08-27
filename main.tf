@@ -19,7 +19,7 @@ resource "aws_s3_bucket" "bits_bucket" {
   }
 }
 
-#create cmk KMS key
+#create KMS key
 
 resource "aws_kms_key" "bits_key" {
   description             = "Customer managed key for S3 bucket encryption"
