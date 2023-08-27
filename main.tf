@@ -52,6 +52,15 @@ resource "aws_kms_key" "bits_key" {
           },
         },
       },
+      {
+        Sid       = "AllowKeyTagging",
+        Effect    = "Allow",
+        Principal = {
+          AWS = "*"
+        },
+        Action    = "kms:TagResource",
+        Resource  = "*",
+      },
     ],
   })
 
