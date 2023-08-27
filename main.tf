@@ -30,22 +30,22 @@ resource "aws_kms_key" "bits_key" {
     Id      = "key-default-1",
     Statement = [
       {
-        Sid       = "Enable IAM User Permissions",
-        Effect    = "Allow",
+        Sid    = "Enable IAM User Permissions",
+        Effect = "Allow",
         Principal = {
           AWS = "*"
         },
-        Action    = "kms:*",
-        Resource  = "*",
+        Action   = "kms:*",
+        Resource = "*",
       },
       {
-        Sid       = "Allow attachment of persistent resources",
-        Effect    = "Allow",
+        Sid    = "Allow attachment of persistent resources",
+        Effect = "Allow",
         Principal = {
           AWS = "*"
         },
-        Action    = "kms:CreateGrant",
-        Resource  = "*",
+        Action   = "kms:CreateGrant",
+        Resource = "*",
         Condition = {
           Bool = {
             "kms:GrantIsForAWSResource" = "true",
@@ -53,13 +53,18 @@ resource "aws_kms_key" "bits_key" {
         },
       },
       {
-        Sid       = "AllowKeyTagging",
-        Effect    = "Allow",
+        Sid    = "AllowKeyTagging",
+        Effect = "Allow",
         Principal = {
           AWS = "*"
         },
-        Action    = "kms:TagResource",
-        Resource  = "*",
+        Action   = "kms:TagResource",
+        Resource = "*",
+        Condition = {
+          Bool = {
+            "kms:GrantIsForAWSResource" = "true",
+          },
+        },
       },
     ],
   })
