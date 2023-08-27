@@ -68,8 +68,3 @@ resource "aws_kms_key" "bits_key" {
       },
     ],
   })
-
-  tags = {
-    Name = var.kms_key_alias
-  }
-}
