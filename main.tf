@@ -1,4 +1,3 @@
-
 #create s3 bucket with versioning and default encryption
 
 resource "aws_s3_bucket" "bits_bucket" {
@@ -62,9 +61,14 @@ resource "aws_kms_key" "bits_key" {
         Resource = "*",
         Condition = {
           Bool = {
-            "kms:GrantIsForAWSPrincipal = "true",
+            "kms:GrantIsForAWSResource" = "true",
           },
         },
       },
     ],
   })
+
+  tags = {
+    Name = var.kms_key_alias
+  }
+}
