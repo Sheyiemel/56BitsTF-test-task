@@ -1,7 +1,7 @@
 #create s3 bucket with versioning and default encryption
 
 resource "aws_s3_bucket" "bits_bucket" {
-  bucket = "bitsbybucket"
+  bucket = var.bucket_name
   acl    = "private"
 
   versioning {
