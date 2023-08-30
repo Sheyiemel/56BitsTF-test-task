@@ -1,5 +1,3 @@
-#create s3 bucket with versioning and default encryption
-
 resource "aws_s3_bucket" "bits_bucket" {
   bucket = var.bucket_name
   acl    = "private"
@@ -7,19 +5,9 @@ resource "aws_s3_bucket" "bits_bucket" {
   versioning {
     enabled = true
   }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        kms_master_key_id = aws_kms_key.bits_key.id
-        sse_algorithm     = "aws:kms"
-      }
-    }
-  }
 }
 
-#create KMS key
-
+# Create KMS key
 resource "aws_kms_key" "bits_key" {
   description             = "Customer managed key for S3 bucket encryption"
   deletion_window_in_days = 30
@@ -71,4 +59,26 @@ resource "aws_kms_key" "bits_key" {
   tags = {
     Name = var.kms_key_alias
   }
+}
+
+resource "aws_s3_bucket_policy" "bits_bucket_policy" {
+  bucket = aws_s3_bucket.bits_bucket.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid       = "RequireEncryption",
+        Effect    = "Deny",
+        Principal = "*",
+        Action    = "s3:PutObject",
+        Resource  = "${aws_s3_bucket.bits_bucket.arn}/*",
+        Condition = {
+          StringNotEqualsIfExists = {
+            "s3:x-amz-server-side-encryption-aws-kms-key-id" = aws_kms_key.bits_key.key_id
+          }
+        }
+      },
+    ],
+  })
 }
