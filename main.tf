@@ -1,3 +1,5 @@
+#create s3 bucket
+
 resource "aws_s3_bucket" "bits_bucket" {
   bucket = var.bucket_name
   acl    = "private"
@@ -60,6 +62,8 @@ resource "aws_kms_key" "bits_key" {
     Name = var.kms_key_alias
   }
 }
+
+#create s3 bucket with encryption and deny all other key access
 
 resource "aws_s3_bucket_policy" "bits_bucket_policy" {
   bucket = aws_s3_bucket.bits_bucket.id
