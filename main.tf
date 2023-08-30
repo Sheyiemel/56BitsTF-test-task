@@ -1,4 +1,4 @@
-#create s3 bucket
+#create s3 bucket with versioning
 
 resource "aws_s3_bucket" "bits_bucket" {
   bucket = var.bucket_name
@@ -63,7 +63,7 @@ resource "aws_kms_key" "bits_key" {
   }
 }
 
-#create s3 bucket with encryption and deny all other key access
+#create s3 bucket policy with serverside-encryption and deny all other key access
 
 resource "aws_s3_bucket_policy" "bits_bucket_policy" {
   bucket = aws_s3_bucket.bits_bucket.id
@@ -72,16 +72,23 @@ resource "aws_s3_bucket_policy" "bits_bucket_policy" {
     Version = "2012-10-17",
     Statement = [
       {
-        Sid       = "RequireEncryption",
-        Effect    = "Deny",
+        Sid       = "AllowSpecificKMSKey",
+        Effect    = "Allow",
         Principal = "*",
         Action    = "s3:PutObject",
         Resource  = "${aws_s3_bucket.bits_bucket.arn}/*",
         Condition = {
-          StringNotEqualsIfExists = {
+          StringEquals = {
             "s3:x-amz-server-side-encryption-aws-kms-key-id" = aws_kms_key.bits_key.key_id
           }
         }
+      },
+      {
+        Sid       = "DenyAllOtherKMSKeys",
+        Effect    = "Deny",
+        Principal = "*",
+        Action    = "s3:PutObject",
+        Resource  = "${aws_s3_bucket.bits_bucket.arn}/*",
       },
     ],
   })
